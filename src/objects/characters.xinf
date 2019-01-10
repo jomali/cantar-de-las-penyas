@@ -1,0 +1,279 @@
+
+
+!!==============================================================================
+!!
+!!	CANTAR DE LAS PEÑAS
+!!	Definición de personajes reclutables por el usuario
+!!
+!!==============================================================================
+!!
+!!	Archivo:		characters.xinf
+!!	Autor(es):		J. Francisco Martín <jfm.lisaso@gmail.com>
+!!	Idioma:			ES (Español)
+!!	Sistema:		Inform-INFSP 6
+!!	Plataforma:		Máquina-Z/Glulx
+!!	Versión:		1.0
+!!	Fecha:			2019/01/XX
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	Este archivo forma parte de la ficción interactiva
+!!	CANTAR DE LAS PEÑAS.
+!!
+!!	CANTAR DE LAS PEÑAS es software libre: usted puede redistribuirlo
+!!	y/o modificarlo bajo los términos de la Licencia Pública General
+!!	GNU publicada por la Fundación para el Software Libre, ya sea la
+!!	versión 3 de la Licencia, o (a su elección) cualquier versión
+!!	posterior.
+!!
+!!	CANTAR DE LAS PEÑAS se distribuye con la esperanza de que sea
+!!	útil, pero SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita
+!!	MERCANTIL o de APTITUD PARA UN PROPÓSITO DETERMINADO. Consulte los
+!!	detalles de la Licencia Pública General GNU para más información.
+!!
+!!	Debería haber recibido una copia de la Licencia Pública General GNU
+!!	junto a CANTAR DE LAS PEÑAS. En caso contrario, consulte
+!!	<http://www.gnu.org/licenses/>.
+!!
+!!	Copyright (c) 2019, J. Francisco Martín
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	TABLA DE CONTENIDOS
+!!
+!!	<>	Alchemist
+!!	<>	Fighter
+!!	<>	Rogue
+!!	<>	Wizard
+!!
+!!------------------------------------------------------------------------------
+
+
+!!------------------------------------------------------------------------------
+!! Alchemist
+!!------------------------------------------------------------------------------
+!! Los alquimistas tienen amplios conocimientos de la naturaleza y pueden crear
+!! diferentes ungüentos y pociones.
+!!
+!!	@version 1.0
+!!------------------------------------------------------------------------------
+
+Class	Alchemist
+ with	class_name [;
+			return "alquimista";
+		],
+		specialization "",
+;
+
+PC		Adso "Adso"
+ class	Alchemist,
+ with	name_f 'persona',
+		name_m 'adso' 'alquimista' 'clerigo' 'hombre' 'personaje',
+		gender G_MASCULINO,
+		image PC_ADSO,
+		specialization "clérigo",
+ has	male proper;
+
+PC		Cloto "Cloto"
+ class	Alchemist,
+ with	name_f 'persona',
+		name_m 'alquimista' 'cloto' 'hombre' 'nigromante' 'personaje',
+		gender G_MASCULINO,
+		image PC_CLOTO,
+		specialization "nigromante",
+ has	male proper;
+
+PC		Hildegard "Hildegard"
+ class	Alchemist,
+ with	name_f 'anacoreta' 'alquimista' 'hildegard' 'mujer' 'persona',
+		name_m 'personaje',
+		gender G_FEMENINO,
+		image PC_HILDEGARD,
+		specialization "anacoreta",
+ has	female proper;
+
+
+!!------------------------------------------------------------------------------
+!! Fighter
+!!------------------------------------------------------------------------------
+!! Especialistas en lucha cuerpo a cuerpo.
+!!
+!!	@version 1.0
+!!------------------------------------------------------------------------------
+
+Class	Fighter
+ with	class_name [;
+			if (IsFemaleNoun(self)) return "luchadora";
+			else return "luchador";
+		],
+		specialization "",
+;
+
+PC		Adah "Adah"
+ class	Fighter,
+ with	name_f 'adah' 'exploradora' 'luchadora' 'mujer' 'persona',
+		name_m 'luchador' 'personaje',
+		gender G_FEMENINO,
+		image PC_ADAH,
+		specialization "exploradora",
+ has	female proper;
+
+PC		Colona "Colona"
+ class	Fighter,
+ with	name_f 'colona' 'luchadora' 'mercenaria' 'mujer' 'persona',
+		name_m 'luchador' 'personaje',
+		gender G_FEMENINO,
+		image PC_COLONA,
+		specialization "mercenaria",
+ has	female proper;
+
+PC		Gyvill "Gyvill"
+ class	Fighter,
+ with	name_f 'luchadora' 'persona',
+		name_m 'gyvill' 'hombre' 'luchador' 'personaje' 'soldado',
+		gender G_MASCULINO,
+		image PC_GYVILL,
+		specialization "soldado",
+ has	male proper;
+
+PC		Isolda "Isolda"
+ class	Fighter,
+ with	name_f 'isolda' 'luchadora' 'mujer' 'persona',
+		name_m 'luchador' 'personaje' 'soldado',
+		gender G_FEMENINO,
+		image PC_ISOLDA,
+		specialization "soldado",
+ has	female proper;
+
+PC		Rolando "Rolando"
+ class	Fighter,
+ with	name_f 'luchadora' 'persona',
+		name_m 'hombre' 'luchador' 'personaje' 'rolando' 'soldado',
+		gender G_MASCULINO,
+		image PC_ROLANDO,
+		specialization "soldado",
+ has	male proper;
+
+PC		Tarsis "Tarsis"
+ class	Fighter,
+ with	name_f 'luchadora' 'persona',
+		name_m 'barbaro' 'hombre' 'luchador' 'personaje' 'tarsis',
+		gender G_MASCULINO,
+		image PC_TARSIS,
+		specialization "bárbaro",
+ has	male proper;
+
+
+!!------------------------------------------------------------------------------
+!! Rogue
+!!------------------------------------------------------------------------------
+!! Ladrones, espadachines, buscavidas... ágiles y veloces.
+!!
+!!	@version 1.0
+!!------------------------------------------------------------------------------
+
+Class	Rogue
+ with	class_name [;
+			if (IsFemaleNoun(self)) return "pícara";
+			else return "pícaro";
+		],
+		specialization "",
+;
+
+PC		Artos "Ártos"
+ class	Rogue,
+ with	name_f 'persona' 'picara',
+		name_m 'artos' 'hombre' 'ladron' 'personaje' 'picaro',
+		gender G_MASCULINO,
+		image PC_ARTOS,
+		specialization "ladron",
+ has	male proper;
+
+PC		Asase "Asase"
+ class	Rogue,
+ with	name_f 'asase' 'espadachina' 'mujer' 'persona' 'picara',
+		name_m 'personaje' 'picaro',
+		gender G_FEMENINO,
+		image PC_ASASE,
+		specialization "espadachina",
+ has	female proper;
+
+PC		Hafid "Hafid"
+ class	Rogue,
+ with	name_f 'persona' 'picara',
+		name_m 'espadachin' 'hafid' 'hombre' 'personaje' 'picaro',
+		gender G_MASCULINO,
+		image PC_HAFID,
+		specialization "espadachín",
+ has	male proper;
+
+PC		Lope "Lope"
+ class	Rogue,
+ with	name_f 'persona' 'picara',
+		name_m 'hombre' 'juglar' 'lope' 'personaje' 'picaro',
+		gender G_MASCULINO,
+		image PC_LOPE,
+		specialization "juglar",
+ has	male proper;
+
+PC		Rouge "Rouge"
+ class	Rogue,
+ with	name_f 'ladrona' 'mujer' 'persona' 'picara' 'rouge',
+		name_m 'personaje' 'picaro',
+		gender G_FEMENINO,
+		image PC_ROUGE,
+		specialization "ladrona",
+ has	female proper;
+
+
+!!------------------------------------------------------------------------------
+!! Wizard
+!!------------------------------------------------------------------------------
+!! Personas capaces de controlar las fuerzas mágicas.
+!!
+!!	@version 1.0
+!!------------------------------------------------------------------------------
+
+Class	Wizard
+ with	class_name [;
+			if (IsFemaleNoun(self)) return "bruja";
+			else return "mago";
+		],
+		specialization "",
+;
+
+PC		Kamunu "Kamunu"
+ class	Wizard,
+ with	name_f 'bruja' 'persona',
+		name_m 'hombre' 'kamunu' 'mago' 'negro' 'personaje',
+		gender G_MASCULINO,
+		image PC_KAMUNU,
+		specialization "negro",
+ has	male proper;
+
+PC		Samira "Samira"
+ class	Wizard,
+ with	name_f 'bruja' 'fuente' 'mujer' 'persona' 'samira',
+		name_m 'personaje' 'mago',
+		gender G_FEMENINO,
+		image PC_SAMIRA,
+		specialization "fuente",
+ has	female proper;
+
+PC		Venola "Venola"
+ class	Wizard,
+ with	name_f 'arcana' 'bruja' 'mujer' 'persona' 'venola',
+		name_m 'personaje' 'mago',
+		gender G_FEMENINO,
+		image PC_ASASE,
+		specialization "arcana",
+ has	female proper;
+
+PC		Zeloran "Zéloran"
+ class	Wizard,
+ with	name_f 'bruja' 'persona',
+		name_m 'erudito' 'hombre' 'mago' 'personaje' 'zeloran',
+		gender G_MASCULINO,
+		image PC_ZELORAN,
+		specialization "erudito",
+ has	male proper;

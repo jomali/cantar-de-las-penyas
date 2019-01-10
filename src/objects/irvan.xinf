@@ -1,0 +1,799 @@
+
+
+!!==============================================================================
+!!
+!!	CANTAR DE LAS PEÑAS
+!!	Isla Irvan. Definición de localidades y objetos
+!!
+!!==============================================================================
+!!
+!!	Archivo:		irvan.xinf
+!!	Autor(es):		J. Francisco Martín <jfm.lisaso@gmail.com>
+!!	Idioma:			ES (Español)
+!!	Sistema:		Inform-INFSP 6
+!!	Plataforma:		Máquina-Z/Glulx
+!!	Versión:		0.0
+!!	Fecha:			2018/12/XX
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	Este archivo forma parte de la ficción interactiva
+!!	CANTAR DE LAS PEÑAS.
+!!
+!!	CANTAR DE LAS PEÑAS es software libre: usted puede
+!!	redistribuirlo y/o modificarlo bajo los términos de la Licencia
+!!	Pública General GNU publicada por la Fundación para el Software
+!!	Libre, ya sea la versión 3 de la Licencia, o (a su elección)
+!!	cualquier versión posterior.
+!!
+!!	CANTAR DE LAS PEÑAS se distribuye con la esperanza de que
+!!	sea útil, pero SIN GARANTÍA ALGUNA; ni siquiera la garantía
+!!	implícita MERCANTIL o de APTITUD PARA UN PROPÓSITO DETERMINADO.
+!!	Consulte los detalles de la Licencia Pública General GNU para más
+!!	información.
+!!
+!!	Debería haber recibido una copia de la Licencia Pública General GNU
+!!	junto a CANTAR DE LAS PEÑAS. En caso contrario, consulte
+!!	<http://www.gnu.org/licenses/>.
+!!
+!!	Copyright (c) 2018, J. Francisco Martín
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	TABLA DE CONTENIDOS
+!!
+!!	1)	Limbo
+!!	2)	Torre
+!!		2.1)	Vestíbulo
+!!		2.2)	Dormitorio
+!!		2.3)	Escalera1
+!!		2.4)	Escalera2
+!!		2.5)	Mazmorra
+!!		2.6)	Mirador
+!!
+!!------------------------------------------------------------------------------
+
+
+!!==============================================================================
+!!
+!!	1)	@Limbo
+!!
+!!------------------------------------------------------------------------------
+
+Room	Limbo "En algún lugar"
+ with	name_f	'babia' 'parte',
+		name_m	'limbo' 'lugar' 'sueno' 'vacio',
+		gender	G_MASCULINO,
+		adjectives 'algun' 'alguna',
+		clarification 0,
+ has	male;
+
+Item	-> Barrote "barrote"
+with	name_f 'barra',
+	   name_m 'barrote',
+	   gender G_MASCULINO,
+	   description [;
+			print "Un pesado [self] de hierro forjado negro.";
+			new_line;
+			return true;
+	   ],
+has	male;
+
+Item	-> PocimaCurativa "pócima desconocida"
+ with	name_f 'pocima',
+		name_m 'frasco',
+		gender G_FEMENINO,
+		adjectives 'desconocida',
+		description [;
+			print "El frasco contiene un líquido negruzco y espeso.";
+			new_line;
+			return true;
+		],
+		before [;
+			Drink:
+				<<Eat self>>;
+		],
+		after [;
+			Eat:
+				print "[plural:player]Tragáis[else]Tragas[fi] el contenido del frasco.";
+				new_line;
+				new_line;
+				Grupo.modify_vitality(1, 40);
+				return true;
+		],
+ has	edible female;
+
+
+!!==============================================================================
+!!
+!!	2)	@Torre
+!!		2.1)	Dormitorio
+!!		2.2)	Escalera1
+!!		2.3)	Escalera2
+!!		2.4)	Mazmorra
+!!		2.5)	Mirador
+!!		2.6)	Vestíbulo
+!!
+!!------------------------------------------------------------------------------
+
+Outdoors	Irvan_Torre "Frente a la torre en ruinas"
+ with	name_f 'ruina' 'torre',
+		name_m 'ruinas',
+		gender G_FEMENINO,
+		description [;
+			print "Un volumen imponente de piedra.";
+			new_line;
+			return true;
+		],
+		n_to Irvan_CruceCaminos,
+		in_to [;
+			return Irvan_TorreVestibulo;
+		],
+ has	female;
+
+Indoors	Irvan_TorreDormitorio "Dormitorio"
+ with	name_f 'estancia' 'habitacion',
+		name_m 'dormitorio',
+		name_mp 'escombros',
+		gender G_MASCULINO,
+		initial [; if (self hasnt visited) {
+			new_line;
+			Utils.horizontal_rule();
+			new_line;
+			print "El primer golpe es en la cara. La visión se te nubla por culpa del dolor. Un sabor metálico.
+			^^
+			Con el segundo golpe te derriban en el suelo. Tienes un instante para coger aire y escupir una flema sanguinolenta antes de que empiecen a arrastrate por el barro. El dolor parece perforarte la cabeza. Alguien te levanta en volandas. Ni siquiera te molestas en resistirte ya. Caes.
+			^^
+			El tercer golpe debe ser brutal. No llegarás a recordarlo nunca.";
+			new_line;
+			Utils.press_any_key();
+			new_line;
+			Grupo.modify_vitality(1, -70);
+			Utils.press_any_key();
+			new_line;
+			Utils.horizontal_rule();
+			new_line;
+			return true;
+		}],
+		description [;
+			if (self hasnt visited) {
+				print "Despiertas con lo que parece la peor resaca de licor de patata casero de la historia. ";
+			}
+			print "[plural:player]Estais[else]Estás[fi] en una habitación abovedada llena de escombros e iluminada por [if:dia]la luz del sol[else]la débil luz de la luna[fi] que se filtra desde un gran [](hueco) abierto en el techo. Hay varios [](catres) destrozados, amontonados contra las paredes. Una sencilla [Irvan_TorreChimenea] en la pared sur.";
+			new_line;
+			return true;
+		],
+		n_to Irvan_TorreEscalera1,
+ has	male;
+
+Atrezzo	-> "catres"
+ with	name_f 'cama' 'estructura',
+		name_fp 'camas' 'estructuras',
+		name_m 'armazon' 'camastro' 'catre' 'somier',
+		name_mp 'armazones' 'camastros' 'catres' 'somieres',
+		gender G_MASCULINO + G_PLURAL,
+		adjectives 'madera' 'vieja' 'viejas' 'viejo' 'viejos',
+		description [;
+			print "Estructuras de madera de algunos viejos camastros. Inservibles ya.";
+			new_line;
+			return true;
+		],
+ has	male pluralname;
+
+Atrezzo	-> Irvan_TorreChimenea "chimenea"
+ with	name_f 'chimenea',
+		name_m 'hogar' 'hollin',
+		gender G_FEMENINO,
+		adjectives 'vieja' 'viejo',
+		before [;
+			Examine:
+				print "El hollín tiñe de negro las piedras de la vieja [self].";
+				new_line;
+				new_line;
+				<<Search self>>;
+			Search:
+				print "En su interior gran cantidad de cenizas. Fragmentos de papel medio incinerados. Restos quemados de cuero. Alguien se dedicó a destruir [Irvan_TorreLibros](libros) en este lugar.";
+				new_line;
+				return true;
+		],
+ has	female transparent;
+
+Item	-> -> Irvan_TorreLibros "libros quemados"
+ with	name_f 'anotacion' 'nota',
+		name_fp 'anotaciones' 'notas',
+		name_m 'libro' 'papel',
+		name_mp 'libros' 'papeles',
+		gender G_MASCULINO + G_PLURAL,
+		adjectives 'calcinada' 'calcinadas' 'calcinado' 'calcinados' 'quemada'
+			'quemadas' 'quemado' 'quemados',
+		before [;
+			Examine,
+			Read,
+			Search,
+			Take:
+				print "[plural:player]Echáis[else]Echas[fi] un vistazo a varios de los pedazos de [self](papel) que han sobrevivido al fuego. Sólo quedan frases sueltas y lo que parecen fragmentos de diagramas. Es imposible conocer los contenidos de esos libros con seguridad, pero podrían tratarse de algún tipo de tratado sobre anatomía humana.";
+				new_line;
+				return true;
+			Pull,
+			Push,
+			Turn:
+				print "Ya no sirven para nada.";
+				new_line;
+				return true;
+		],
+ has	male pluralname scenery;
+
+Atrezzo	-> Irvan_TorreDormitorioHueco "hueco"
+ with	name_m 'agujero' 'hueco',
+		gender G_MASCULINO,
+		adjectives 'techo',
+		description [;
+			print "Un gran [self](agujero) abierto en la bóveda de piedra del techo. Está demasiado alto como para poder alcanzarlo desde allí.";
+			new_line;
+			if (self hasnt described) {
+				new_line;
+				print "Viendo la altura de la caída parece increíble no haber acabado con algún hueso roto.";
+				new_line;
+			}
+			return true;
+		],
+ has	male;
+
+Indoors	Irvan_TorreEscalera1 "Escalera de caracol"
+ with	name_f 'escalera',
+		name_fp 'escaleras',
+		gender G_FEMENINO,
+		adjectives 'caracol',
+		description [;
+			print "Al pie de la empinada escalera de caracol, [una Irvan_TorreAntorcha] apagada. Los resbaladizos escalones ascienden en espiral hacia la oscuridad de más arriba.";
+			new_line;
+			if (self.state ~= 0) {
+				new_line;
+				print "Parte de la pared [e_obj] se ha deslizado mostrando una entrada.";
+				new_line;
+			}
+			return true;
+		],
+		u_to Irvan_TorreEscalera2,
+		s_to Irvan_TorreDormitorio,
+		e_to [;
+			if (self.state == 0) return 0;
+			else return Irvan_TorreMazmorra;
+		],
+ has	female;
+
+Item	-> Irvan_TorreAntorcha "antorcha"
+ with	name_f 'antorcha' 'tea',
+		name_m 'aplique' 'soporte',
+		gender G_FEMENINO,
+		adjectives 'apagada' 'forjado' 'hierro',
+		description [;
+			print "En realidad es sólo un soporte de hierro negro cubierto de telarañas.";
+			new_line;
+			return true;
+		],
+		before [;
+			Blow,
+			SwitchOff:
+				print "[plural:player]Sopláis[else]Soplas[fi] sobre [la self], pero únicamente sirve para levantar algo de ceniza.";
+				new_line;
+				return true;
+			Burn,
+			SwitchOn:
+				<<Examine self>>;
+			Pull:
+				if (Irvan_TorreEscalera1.state == 0) {
+					print "La sujección [del self] parece tener algo de holgura. [plural:player]Tiráis[else]Tiras[fi] de ella, pero no parece ceder más allá en ese sentido.";
+					new_line;
+					return true;
+				} else {
+					Irvan_TorreEscalera1.state = 0;
+					print "Al tirar [del self] el paso secreto se cierra de nuevo.";
+					new_line;
+					return true;
+				}
+			Push:
+				if (Irvan_TorreEscalera1.state ~= 0) {
+					print "La sujección [del self] parece tener algo de holgura. La [plural:player]empujáis[else]empujas[fi] pero no parece ceder más en ese sentido.";
+					new_line;
+					return true;
+				} else {
+					Irvan_TorreEscalera1.state = 1;
+					print "Al empujar [la self] una porción de la pared se abre [al e_obj] dando acceso a una estancia.";
+					new_line;
+					return true;
+				}
+			Take:
+				print "[La self] está sujeta a la pared, aunque parece que la sujección tiene cierta holgura.";
+				new_line;
+				return true;
+			Turn:
+				print "Al intentar girar [el self] [plural:player]notáis[else]notas[fi] algo de holgura en la sujección.";
+				new_line;
+				return true;
+
+		],
+ has	concealed female ~light static;
+
+Indoors	Irvan_TorreEscalera2 "Escalera de caracol"
+ with	name_f 'escalera',
+		name_fp 'escaleras',
+		gender G_FEMENINO,
+		adjectives 'caracol',
+		description [;
+			print "[plural:player]Avanzáis[else]Avanzas[fi] con cuidado de no tropezar con las piedras irregulares del suelo. Al oeste se abre un estrecho pasadizo. Una corriente invisible de aire recorre la escalera de caracol con un murmullo quedo.";
+			new_line;
+			return true;
+		],
+		d_to Irvan_TorreEscalera1,
+		u_to Irvan_TorreMirador,
+		w_to Irvan_TorreVestibulo,
+ has	female;
+
+Indoors	Irvan_TorreMazmorra "Mazmorra"
+ with	name_f 'carcel' 'mazmorra',
+		name_m 'calabozo' 'prision',
+		gender G_FEMENINO,
+		description [;
+			print "Una pequeña estancia sin ventanas. El suelo está cubierto de paja podrida. En una repisa, labrada directamente sobre la piedra de la pared, se puede adivinar la forma de un cofre entre las sombras.";
+			new_line;
+			return true;
+		],
+		w_to Irvan_TorreEscalera1,
+		out_to [;
+			return self.e_to();
+		],
+ has	female ~light;
+
+Indoors	Irvan_TorreMirador "Mirador"
+ with	name_f 'estancia' 'habitacion',
+		name_m 'mirador',
+		gender G_MASCULINO,
+		description [;
+			print "La escalera desemboca en una estancia circular. A un lado un escritorio iluminado por [if:dia]el sol[else]la luna[fi]. Partículas de polvo flotando en los rayos de luz que se cuelan a través de un amplio [Irvan_TorreTragaluz].
+			^^
+			Tras el escritorio, el que parece ser el único habitante de la torre: [un Irvan_TorreEsqueleto] semiderrumbado de forma grotesca, como un títere desmadejado.";
+			new_line;
+			return true;
+		],
+		before [;
+			Go:
+				if (noun == out_obj && Irvan_TorreTragaluz.state == 0) {
+					<<Enter Irvan_TorreTragaluz>>;
+				}
+		],
+		d_to Irvan_TorreEscalera2,
+		out_to [;
+			if (Irvan_TorreTragaluz.state == 0) return 0;
+			else return Irvan_TorreTragaluz;
+		],
+ has	male;
+
+HeavyItem	-> "escritorio"
+ with	name_f 'mesa',
+		name_m 'escritorio' 'mueble',
+		gender G_MASCULINO,
+		description [;
+			print "De madera oscura. Lleno de polvo, como todo en aquel lugar.";
+			new_line;
+			return true;
+		],
+ has	concealed male;
+
+Atrezzo	-> Irvan_TorreEsqueleto "esqueleto"
+ with	name_m 'cadaver' 'cuerpo' 'esqueleto' 'muerto',
+		name_mp 'huesos',
+		gender G_MASCULINO,
+		description [;
+			print "Sonríe a la nada, caído sobre el escritorio.";
+			if (CuchilloOxidado hasnt moved) {
+				print " Su mano aferrando aún el mango de [un CuchilloOxidado].";
+			}
+			new_line;
+			return true;
+		],
+		before [;
+			LookUnder,
+			Search,
+			Take,
+			Turn,
+			Pull,
+			Push:
+				if (self.state == 0) {
+					self.state++;
+					move PocimaCurativa to real_location;
+					print "[plural:player]Buscáis[else]Buscas[fi] entre el buruño de telas que cubren [al self]. Algo cae. Un [PocimaCurativa](frasco) oculto entre las ropas golpea el suelo sin llegar a romperse y rueda un par de metros hasta detenerse.";
+					new_line;
+					return true;
+				} else {
+					print "Este desgraciado no tiene nada más de valor.";
+					new_line;
+					return true;
+				}
+		],
+ has	male;
+
+Atrezzo	-> Irvan_TorreTragaluz "tragaluz"
+ with	name_f 'ventana',
+		name_m 'tragaluz' 'ventanuco' 'vidrio',
+		name_mp 'barrotes',
+		gender G_MASCULINO,
+		description [;
+			switch (self.state) {
+				0:
+					print "Por entre los barrotes [del self] se puede ver una amplia extensión de marismas rodeando la torre.
+					^^
+					Esos barrotes, [plural:player]observais[else]observas[fi], se encuentran en el mismo estado deplorable en el que está todo en aquel lugar; llenos de óxido y erosionados por los elementos, con la argamasa que los sujeta desprendida en algunos sitios.";
+					new_line;
+					return true;
+				1:
+					print "Al arrancar uno de los barrotes [del self] ha quedado un hueco lo suficientemente grande como para poder pasar por él. Al otro lado, sin embargo, aguarda una gran caída hasta el suelo.";
+					new_line;
+					return true;
+				2:
+					print "Al arrancar uno de los barrotes [del self] ha quedado un hueco lo suficientemente grande como para poder pasar por él. Una cuerda atada a los barrotes restantes cuelga por la fachada de la torre hasta el suelo.";
+					new_line;
+					return true;
+			}
+		],
+		react_before [;
+			Tie:
+				if ((second == nothing || second == self) && noun ofclass Rope
+					&& IndirectlyContains(player, noun)) {
+					switch (self.state) {
+						0:
+							self.state = 1;
+							move Barrote to player;
+							print "[plural:player]Atáis[else]Atas[fi] la cuerda a uno de los barrotes que parecen estar flojos y la [plural:player]retorcéis[else]retuerces[fi] hasta que la presión hace que [el Barrote] se desprenda de la argamasa, dejando un espacio lo suficientemente amplio como para permitir a una persona deslizarse a través suyo.";
+							new_line;
+							return true;
+						1:
+							move noun to self;
+							self.state = 2;
+							print "[plural:player]Atáis[else]Atas[fi] un extremo de la cuerda a los barrotes [del self] que parecen encontrarse en mejor estado y [plural:player]dejáis[else]dejas[fi] caer el otro extremo por fuera.";
+							new_line;
+							return true;
+						2:
+							print "Ya hay una cuerda atada [al self].";
+							new_line;
+							return true;
+					}
+				}
+		],
+		before [
+			obj;
+			Attack,
+			Pull,
+			Push,
+			Take,
+			Turn:
+				if (self.state == 0) {
+					self.state = 1;
+					move Barrote to player;
+					print "[plural:player]Agarrais[else]Agarras[fi] con fuerza uno de los barrotes que parece peor sujeto [al self] y [plural:player]forcejeais[else]forcejeas[fi] con él hasta que se desprende completamente de la argamasa, dejando un espacio lo suficientemente amplio como para permitir a una persona deslizarse a través suyo hasta el vacío del otro lado.";
+					new_line;
+					return true;
+				} else {
+					print "Ya [plural:player]habéis[else]has[fi] abierto un espacio lo suficientemente grande en [el self] como para poder [plural:player]deslizaros[else]deslizarte[fi] por él hasta [out_obj](afuera).";
+					new_line;
+					return true;
+				}
+			Enter:
+				obj = self.door_to();
+				if (obj ~= 0) {
+					<<Go self.door_dir>>;
+				}
+				return true;
+		],
+		door_dir out_obj,
+		door_to [;
+			switch (self.state) {
+				0:
+					print "No [plural:player]podéis[else]puedes[fi] pasar a través de los barrotes [del self].";
+					new_line;
+					return 0;
+				1:
+					print "[plural:player]Os deslizáis[else]Te deslizas[fi] por entre los barrotes [del self] y [plural:player]saltáis[else]saltas[fi] al vacío. El impacto contra el suelo es terrible.";
+					new_line;
+					new_line;
+					if (Grupo.modify_vitality(1, -70)) {
+						new_line;
+						return Irvan_Torre;
+					}
+					return true;
+				2:
+					print "[plural:player]Os deslizáis[else]Te deslizas[fi] por entre los barrotes [del self] y, con cuidado, [plural:player]descendéis[else]desciendes[fi] por la cuerda hasta alcanzar el suelo.";
+					new_line;
+					return Irvan_Torre;
+			}
+		],
+ has	door male open ~openable;
+
+Item	-> CuchilloOxidado "cuchillo oxidado"
+ class	Dagger,
+ with	name_f 'arma' 'hoja',
+		name_m 'cuchillo' 'punal',
+		gender G_MASCULINO,
+		adjectives 'flamigera' 'flamigero' 'herrumbroso' 'oxidado',
+		description [;
+			print "Un [self](cuchillo) de hoja flamígera algo mellado y cubierto de herrumbre. Tiene el motivo de una víbora grabado toscamente en la empuñadura.";
+			new_line;
+			return true;
+		],
+		after [;
+			if (self has concealed) {
+				give self ~concealed;
+			}
+		],
+ has	concealed male;
+
+Indoors	Irvan_TorreVestibulo "Vestibulo"
+ with	name_f 'entrada' 'estancia' 'habitacion' 'tronera',
+		name_fp 'troneras',
+		name_m 'soporte' 'vestibulo',
+		gender G_MASCULINO,
+		adjectives 'armadura',
+		description [;
+			print "Múltiples troneras abiertas en la pared arrojan luz sobre el amplio vestíbulo. Al oeste, [la Irvan_TorrePuerta] de la torre. Está franqueada por un soporte de armadura";
+			if (true) { ! FIXME
+				print " vacío";
+			} else {
+				print " con un sucio peto metálico";
+			}
+			print ".";
+			new_line;
+			return true;
+		],
+		e_to Irvan_TorreEscalera2,
+		w_to [;
+			if (Irvan_TorrePuerta has open && Irvan_TorrePuerta.state > 0) {
+				return Irvan_Torre;
+			} else {
+				return 0;
+			}
+		],
+ has	male;
+
+HeavyItem	-> Irvan_TorreLampara "lámpara"
+ with	name_f 'lampara',
+		gender G_FEMENINO,
+		adjectives 'techo',
+		describe [;
+			new_line;
+			if (self.state == 0) {
+				print "[Una self] cuelga vacilante del techo, sujeta por [una CuerdaTorre].";
+			} else {
+				print "[Una self] caída en medio de la habitación.";
+			}
+			new_line;
+			return true;
+		],
+		description [;
+			print "Hierro forjado negro con los apliques cubiertos de cera derretida. Llena de polvo y telarañas, como todo lo demás aquí. Nadie utiliza esta torre desde hace mucho tiempo.";
+			new_line;
+			if (self.state == 0) {
+				new_line;
+				print "Cuelga penosamente del techo del vestíbulo gracias a [una CuerdaTorre].";
+				new_line;
+				return true;
+			} else {
+				new_line;
+				print "Está caída en el suelo, en el medio del vestíbulo.";
+				new_line;
+				return true;
+			}
+			return true;
+		],
+		before [;
+			Pull,
+			Push,
+			Smell,
+			Take,
+			Touch,
+			Turn:
+				if (self.state == 0) {
+					print "[La self] está demasiado alta.";
+					new_line;
+					return true;
+				}
+			Untie:
+				if (self.state > 0) {
+					print "Ya está caída en el suelo.";
+					new_line;
+					return true;
+				} else {
+					<<Untie CuerdaTorre>>;
+				}
+		],
+ has	female;
+
+Item	-> CuerdaTorre "cuerda"
+ class	Rope
+ with	name_f 'cuerda',
+		gender G_FEMENINO,
+		adjectives 'raida',
+		description [;
+			if (self.state == 0) {
+				print "[La Irvan_TorreLampara] se sostiene por [una self] a través de una polea del techo. El otro extremo de [la self] está atado a un gancho de hierro en la pared.";
+				new_line;
+				return true;
+			} else {
+				print "[Una self] raída.";
+				new_line;
+				return true;
+			}
+		],
+		before [;
+			Attack,
+			Cut:
+				if (second ofclass Dagger || second ofclass ShortSword
+					|| second ofclass LongSword) {
+					if (self.state == 0) {
+						self.state = 1;
+						Irvan_TorreLampara.state = 1;
+						give self ~concealed;
+						give self ~static;
+						print "[plural:player]Cortáis[else]Cortas[fi] [la self] a la altura del gancho de la pared y automáticamente [la Irvan_TorreLampara] cae al suelo en mitad del vestíbulo. El estruendo es como el de un ariete estrellándose contra mampostería.";
+						new_line;
+						return true;
+					} else {
+						print "Seguir cortando más [la self] puede hacerla inservible.";
+						new_line;
+						return true;
+					}
+				} else if (second ~= nothing) {
+					print "No se puede cortar [la self] con [el second].";
+					new_line;
+					return true;
+				} else {
+					print "[plural:player]Necesitáis[else]Necesitas[fi] algo con lo que cortar [la self].";
+					new_line;
+					return true;
+				}
+			Tie:
+				if (self.state == 0 || self.state == 2) {
+					print "Ya está atada.";
+					new_line;
+					return true;
+				}
+			Untie:
+				switch (self.state) {
+					0:
+						print "[plural:player]Intentáis[else]Intentas[fi] desatar [la self] del gancho de la pared, pero [plural:player]os veis incapaces[else]te ves incapaz[fi]. El tiempo ha apelmazado las fibras hasta el punto de hacer imposible desatar el nudo ahora.";
+						new_line;
+						return true;
+					1:
+						print "No está atada a ninguna parte.";
+						new_line;
+						return true;
+					2:
+						self.state = 1;
+						print "[plural:player]Desatáis[else]Desatas[fi] [la self].";
+						new_line;
+						return true;
+				}
+		],
+ has	concealed female static;
+
+HeavyItem	-> Irvan_TorrePuerta "puerta principal"
+ with	name_f 'entrada' 'puerta' 'salida',
+		gender G_FEMENINO,
+		adjectives 'madera' 'principal',
+		description [;
+			print "Se trata de una [self](puerta) de madera maciza con remaches de hierro negro.";
+			if (self hasnt open) {
+				print " Está cerrada.";
+			} else {
+				if (self.state == 0) {
+					print " La cerradura está bloqueada. No has podido empujarla más que unos centímetros, apenas lo suficiente como para abrir una rendija por la que difícilmente se puede meter más que la hoja de una espada.";
+				} else {
+					print " Está abierta, dejando pasar la luz del exterior en la viciada atmósfera de la torre.";
+				}
+			}
+			new_line;
+			return true;
+		],
+		before [;
+			Open:
+				if (self.state == 0) {
+					if (self hasnt open) give self open;
+					print "[plural:player]Empujáis [la self] pero no sois capaces[else]Empujas [la self] pero tiene la cerradura bloqueada y no eres capaz[fi] de abrirla más que unos centímetros.";
+				}
+			Unlock:
+				if (self.state == 1) {
+					print "La cerradura ya está rota. No es necesario.";
+					new_line;
+					return true;
+				}
+				if (self.state == 0 && second == Barrote) {
+					self.state = 1;
+					give self open;
+					print "[plural:player]Introducís[else]Introduces[fi] [el second] en la rendija entre [la self] y la pared y [plural:player]hacéis[else]haces[fi] fuerza. Algo cruje. [plural:player]Tiráis[else]Tiras[fi] [del second] con más fuerza y, finalmente, la cerradura cede con un feo crujido y [la self] se abre de par en par.";
+					new_line;
+					return true;
+				}
+		],
+		door_to [;
+			if (self.state == 1) return Irvan_Torre;
+			else {
+				print "No [plural:player]podéis[else]puedes[fi] pasar a través de [la self].";
+				new_line;
+				return true;
+			}
+		],
+ has	concealed door female;
+
+!!==============================================================================
+!!
+!!	3)	@CruceCaminos
+!!
+!!------------------------------------------------------------------------------
+
+Outdoors	Irvan_CruceCaminos "Cruce de caminos"
+ with	name_f 'interseccion',
+		name_m 'cruce',
+		gender G_MASCULINO,
+		description [;
+			print "Un cruce de caminos.";
+			new_line;
+			return true;
+		],
+		n_to Irvan_Aldea,
+		s_to Irvan_Torre,
+		e_to Irvan_CaminoEste,
+		w_to Irvan_CaminoOeste,
+ has	female;
+
+!!==============================================================================
+!!
+!!	4)	@Aldea
+!!
+!!------------------------------------------------------------------------------
+
+Outdoors	Irvan_Aldea "Aldea"
+ with	name_f 'aldea',
+		name_m 'poblado' 'pueblo',
+		gender G_FEMENINO,
+		description [;
+			print "La aldea está compuesta por una veintena de edificaciones. La mayoría construcciones sencillas con cimientos de piedra y paredes de adobe.";
+			new_line;
+			return true;
+		],
+		s_to Irvan_CruceCaminos,
+ has	female;
+
+!!==============================================================================
+!!
+!!	5)	@CaminoEste
+!!
+!!------------------------------------------------------------------------------
+
+Outdoors	Irvan_CaminoEste "Camino este"
+ with	name_f 'pradera',
+		name_m 'camino' 'campo',
+		gender G_MASCULINO,
+		description [;
+			print "El terreno está dominado por amplias praderas.";
+			new_line;
+			return true;
+		],
+		w_to Irvan_CruceCaminos,
+ has	female;
+
+!!==============================================================================
+!!
+!!	6)	@CaminoOeste
+!!
+!!------------------------------------------------------------------------------
+
+Outdoors	Irvan_CaminoOeste "Camino oeste"
+ with	name_f 'pradera',
+		name_m 'camino' 'campo',
+		gender G_MASCULINO,
+		description [;
+			print "El terreno está dominado por amplias praderas.";
+			new_line;
+			return true;
+		],
+		e_to Irvan_CruceCaminos,
+ has	female;

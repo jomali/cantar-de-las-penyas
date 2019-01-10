@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ifindex version="1.0" xmlns="http://babel.ifarchive.org/protocol/iFiction/">
+    <story>
+        <identification>
+            <ifid>55B86197-97BE-4E09-B908-8BCDF6106E8A</ifid>
+            <format>glulx</format>
+        </identification>
+        <bibliographic>
+            <title>Leyendas del archipielago</title>
+            <author>J. Francisco Martin</author>
+            <language>ES</language>
+            <genre>fiction</genre>
+            <forgiveness>polite</forgiveness>
+            <description></description>
+        </bibliographic>
+        <contacts>
+            <authoremail>jfm.lisaso@gmail.com</authoremail>
+            <url>https://jomali.itch.io/</url>
+        </contacts>
+        <release>
+            <version>1</version>
+            <releasedate>2018/12/21</releasedate>
+        </release>
+        <colophon>
+            <generator>Babble</generator>
+            <originated>2018/12/21</originated>
+        </colophon>
+    </story>
+</ifindex>
