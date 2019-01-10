@@ -88,7 +88,7 @@ Constant Story
 "Cantar de las peñas";
 
 Constant Headline
-"Un CRPG de texto, (c) 2019";
+"(c) 2019";
 
 Constant Checking 0;
 Release 0;

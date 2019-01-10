@@ -2,15 +2,16 @@
 <ifindex version="1.0" xmlns="http://babel.ifarchive.org/protocol/iFiction/">
     <story>
         <identification>
-            <ifid>55B86197-97BE-4E09-B908-8BCDF6106E8A</ifid>
+            <ifid>29C8FC80-0DAA-43FC-BD01-D71A52767980</ifid>
             <format>glulx</format>
         </identification>
         <bibliographic>
-            <title>Leyendas del archipielago</title>
-            <author>J. Francisco Martin</author>
+            <title>Cantar de las penyas</title>
+            <author>J. Francisco Martín</author>
             <language>ES</language>
+            <headline>Un CRPG de texto</headline>
             <genre>fiction</genre>
-            <forgiveness>polite</forgiveness>
+            <forgiveness>tough</forgiveness>
             <description></description>
         </bibliographic>
         <contacts>
@@ -19,11 +20,11 @@
         </contacts>
         <release>
             <version>1</version>
-            <releasedate>2018/12/21</releasedate>
+            <releasedate>2019/01/10</releasedate>
         </release>
         <colophon>
             <generator>Babble</generator>
-            <originated>2018/12/21</originated>
+            <originated>2019/01/10</originated>
         </colophon>
     </story>
 </ifindex>

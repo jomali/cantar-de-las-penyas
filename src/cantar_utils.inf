@@ -710,8 +710,9 @@ Object	Utils "(Utilities)"
 				if (amount == 0) {
 					print " ", (string) attribute, ".";
 				} else {
+					amount = -amount; ! valor absoluto
 					print ": -", amount, " pto";
-					if (amount < -1) print "s";
+					if (amount > 1) print "s";
 					print ". de ", (string) attribute, " (=", total, ").";
 				}
 				print (string) TEXT_STYLE_PARSER_SUFIX;

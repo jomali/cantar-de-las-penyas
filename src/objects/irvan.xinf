@@ -69,15 +69,16 @@ Room	Limbo "En algún lugar"
  has	male;
 
 Item	-> Barrote "barrote"
-with	name_f 'barra',
-	   name_m 'barrote',
-	   gender G_MASCULINO,
-	   description [;
+ class	Club,
+ with	name_f 'barra',
+		name_m 'barrote',
+		gender G_MASCULINO,
+		description [;
 			print "Un pesado [self] de hierro forjado negro.";
 			new_line;
 			return true;
-	   ],
-has	male;
+		],
+ has	male;
 
 Item	-> PocimaCurativa "pócima desconocida"
  with	name_f 'pocima',
@@ -98,7 +99,7 @@ Item	-> PocimaCurativa "pócima desconocida"
 				print "[plural:player]Tragáis[else]Tragas[fi] el contenido del frasco.";
 				new_line;
 				new_line;
-				Grupo.modify_vitality(1, 40);
+				Grupo.modify_vitality(1, 50);
 				return true;
 		],
  has	edible female;
@@ -121,13 +122,21 @@ Outdoors	Irvan_Torre "Frente a la torre en ruinas"
 		name_m 'ruinas',
 		gender G_FEMENINO,
 		description [;
-			print "Un volumen imponente de piedra.";
+			print "La torre es un volumen imponente de piedra. Su silueta se recorta oscura contra el cielo nocturno, como una premonición.";
 			new_line;
+			deadflag = 2; !! FIXME
 			return true;
 		],
 		n_to Irvan_CruceCaminos,
 		in_to [;
-			return Irvan_TorreVestibulo;
+			if (Irvan_TorrePuerta has open) {
+				return Irvan_TorreVestibulo;
+			} else if (Irvan_TorreTragaluz.state == 2) {
+				return Irvan_TorreMirador;
+			} else {
+				!! TODO - Crear localidad de transición
+ 				return 0;
+			}
 		],
  has	female;
 
@@ -493,7 +502,7 @@ Atrezzo	-> Irvan_TorreTragaluz "tragaluz"
 					new_line;
 					return 0;
 				1:
-					print "[plural:player]Os deslizáis[else]Te deslizas[fi] por entre los barrotes [del self] y [plural:player]saltáis[else]saltas[fi] al vacío. El impacto contra el suelo es terrible.";
+					print "[plural:player]Os deslizáis[else]Te deslizas[fi] por entre los barrotes [del self] y [plural:player]saltáis[else]saltas[fi] al vacío. La caída es larga. [plural:player]Impactáis[else]Impactas[fi] contra el suelo salvajemente.";
 					new_line;
 					new_line;
 					if (Grupo.modify_vitality(1, -70)) {
@@ -503,6 +512,7 @@ Atrezzo	-> Irvan_TorreTragaluz "tragaluz"
 					return true;
 				2:
 					print "[plural:player]Os deslizáis[else]Te deslizas[fi] por entre los barrotes [del self] y, con cuidado, [plural:player]descendéis[else]desciendes[fi] por la cuerda hasta alcanzar el suelo.";
+					new_line;
 					new_line;
 					return Irvan_Torre;
 			}
@@ -516,7 +526,7 @@ Item	-> CuchilloOxidado "cuchillo oxidado"
 		gender G_MASCULINO,
 		adjectives 'flamigera' 'flamigero' 'herrumbroso' 'oxidado',
 		description [;
-			print "Un [self](cuchillo) de hoja flamígera algo mellado y cubierto de herrumbre. Tiene el motivo de una víbora grabado toscamente en la empuñadura.";
+			print "Un sucio [self](cuchillo) de hoja flamígera algo oxidado. Tiene el motivo de una víbora grabado toscamente en la empuñadura.";
 			new_line;
 			return true;
 		],
@@ -544,13 +554,16 @@ Indoors	Irvan_TorreVestibulo "Vestibulo"
 			new_line;
 			return true;
 		],
+		before [;
+			Go:
+				if (noun == out_obj && Irvan_TorrePuerta hasnt open) {
+					<<Enter Irvan_TorrePuerta>>;
+				}
+		],
 		e_to Irvan_TorreEscalera2,
-		w_to [;
-			if (Irvan_TorrePuerta has open && Irvan_TorrePuerta.state > 0) {
-				return Irvan_Torre;
-			} else {
-				return 0;
-			}
+		out_to [;
+			if (Irvan_TorrePuerta hasnt open) return 0;
+			else return Irvan_Torre;
 		],
  has	male;
 
@@ -626,14 +639,13 @@ Item	-> CuerdaTorre "cuerda"
 		before [;
 			Attack,
 			Cut:
-				if (second ofclass Dagger || second ofclass ShortSword
-					|| second ofclass LongSword) {
+				if (second ofclass Dagger || second ofclass Sword) {
 					if (self.state == 0) {
 						self.state = 1;
 						Irvan_TorreLampara.state = 1;
 						give self ~concealed;
 						give self ~static;
-						print "[plural:player]Cortáis[else]Cortas[fi] [la self] a la altura del gancho de la pared y automáticamente [la Irvan_TorreLampara] cae al suelo en mitad del vestíbulo. El estruendo es como el de un ariete estrellándose contra mampostería.";
+						print "[plural:player]Cortáis[else]Cortas[fi] [la self] a la altura del gancho de la pared y automáticamente [la Irvan_TorreLampara] cae al suelo en mitad del vestíbulo. Un estruendo como de ariete estrellándose contra mampostería.";
 						new_line;
 						return true;
 					} else {
@@ -684,44 +696,81 @@ HeavyItem	-> Irvan_TorrePuerta "puerta principal"
 			if (self hasnt open) {
 				print " Está cerrada.";
 			} else {
-				if (self.state == 0) {
-					print " La cerradura está bloqueada. No has podido empujarla más que unos centímetros, apenas lo suficiente como para abrir una rendija por la que difícilmente se puede meter más que la hoja de una espada.";
-				} else {
-					print " Está abierta, dejando pasar la luz del exterior en la viciada atmósfera de la torre.";
-				}
+				print " Ha quedado semiabierta y algo desencajada tras partir uno de los oxidados goznes sobre los que descansaba.";
 			}
 			new_line;
 			return true;
 		],
-		before [;
-			Open:
-				if (self.state == 0) {
-					if (self hasnt open) give self open;
-					print "[plural:player]Empujáis [la self] pero no sois capaces[else]Empujas [la self] pero tiene la cerradura bloqueada y no eres capaz[fi] de abrirla más que unos centímetros.";
-				}
+		react_before [;
+			Attack,
+			Open,
 			Unlock:
-				if (self.state == 1) {
-					print "La cerradura ya está rota. No es necesario.";
-					new_line;
-					return true;
-				}
-				if (self.state == 0 && second == Barrote) {
-					self.state = 1;
-					give self open;
-					print "[plural:player]Introducís[else]Introduces[fi] [el second] en la rendija entre [la self] y la pared y [plural:player]hacéis[else]haces[fi] fuerza. Algo cruje. [plural:player]Tiráis[else]Tiras[fi] [del second] con más fuerza y, finalmente, la cerradura cede con un feo crujido y [la self] se abre de par en par.";
-					new_line;
-					return true;
+				if (self.try_to_open) {
+					if (noun == self && self hasnt open && second == 0) {
+						if (IndirectlyContains(player, CuchilloOxidado)) {
+							second = CuchilloOxidado;
+						}
+						if (IndirectlyContains(player, Barrote)) {
+							second = Barrote;
+						}
+					}
 				}
 		],
-		door_to [;
-			if (self.state == 1) return Irvan_Torre;
-			else {
-				print "No [plural:player]podéis[else]puedes[fi] pasar a través de [la self].";
+		before [
+			obj;
+			Attack,
+			Open,
+			Unlock:
+				if (self.try_to_open == false) self.try_to_open = true;
+				if (self has open) {
+					print "Ha quedado inutilizada.";
+					new_line;
+					return true;
+				}
+				if (self hasnt open && second == 0) {
+					print "Al empujarla se puede oir rechinar la herrumbre que cubre los goznes de la [self](puerta), pero está atascada y no cede. [plural:player]Sois incapaces[else]Eres incapaz[fi] de abrirla más que unos pocos centímetros, apenas lo suficiente para que se cuele una ligera ráfaga de aire del exterior.";
+					new_line;
+					return true;
+				}
+				if (self hasnt open && second ofclass Dagger) {
+					print "[plural:player]Introducís[else]Introduces[fi] el filo [del second] por la rendija abierta en [la self] y [plural:player]tratáis[else]tratas[fi] de hacer palanca. Es inútil; no [plural:player]conseguís[else]consigues[fi] hacer fuerza suficiente. Tal vez con algo más largo.";
+					new_line;
+					return true;
+				}
+				if (self hasnt open && second ofclass Club or Sword) {
+					give self open;
+					print "[plural:player]Introducís[else]Introduces[fi] [el second] por la rendija entre [la self] y el marco de la pared y [plural:player]tratáis[else]tratas[fi] de hacer palanca. Algo cruje. [plural:player]Tiráis[else]Tiras[fi] [del second] con más fuerza hasta que uno de los goznes cede con un gran chasquido. La [self](puerta) oscila hacia afuera un momento antes que el gozne se parta por completo, dejándola semiabierta e inutilizada con una inclinación anormal. ";
+					new_line;
+					return true;
+				}
+				print "[El second] no [plural:player]os[else]te[fi] va a servir para abrir [la self].";
 				new_line;
 				return true;
-			}
+			Enter:
+				obj = self.door_to();
+				if (obj ~= 0) {
+					<<Go self.door_dir>>;
+				}
+				return true;
+			Pull:
+				if (self has open) <<Open self>>;
+				else <<Close self>>;
+			Push:
+				<<Open self>>;
+
 		],
- has	concealed door female;
+		door_dir out_obj,
+		door_to [;
+			if (self hasnt open) {
+				print "No [plural:player]podéis[else]puedes[fi] pasar a través de [la self].";
+				new_line;
+				return 0;
+			}
+			return Irvan_Torre;
+		],
+ private
+		try_to_open false,
+ has	concealed door female ~open;
 
 !!==============================================================================
 !!
